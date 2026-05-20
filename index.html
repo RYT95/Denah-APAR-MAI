@@ -292,17 +292,6 @@
     wheelPxPerZoomLevel: 500   // PERLAMBAT ZOOM
   });
 
-  // --- TAMPILAN KOORDINAT ---
-  map.on("click", function (e) {
-  const y = e.latlng.lat.toFixed(0);
-  const x = e.latlng.lng.toFixed(0);
-
-  L.popup()
-    .setLatLng(e.latlng)
-    .setContent("X: " + x + "<br>Y: " + y)
-    .openOn(map);
-  });
-
   const w = 3508;
   const h = 4961;
 
