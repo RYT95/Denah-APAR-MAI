@@ -253,6 +253,50 @@
       opacity: 0.4;
     }
 
+    #toggleEvacBtn {
+      position: absolute;
+      top: 410px;   /* di bawah tombol P3K */
+      right: 10px;
+      background: white;
+      padding: 14px;
+      border-radius: 14px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.3);
+      cursor: pointer;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.3s ease;
+      width: 60px;
+      overflow: hidden;
+    }
+
+    #toggleEvacBtn img {
+      width: 50px;
+    }
+
+    #toggleEvacBtn .evac-label-text {
+      font-family: Arial, sans-serif;
+      font-size: 18px;
+      font-weight: bold;
+      opacity: 0;
+      white-space: nowrap;
+      transition: opacity 0.3s ease;
+    }
+
+    #toggleEvacBtn.active {
+      width: 200px;   /* lebih lebar karena tulisan EVACUATION panjang */
+    }
+
+    #toggleEvacBtn.active .evac-label-text {
+      opacity: 1;
+    }
+
+    #toggleEvacBtn.off img {
+      filter: grayscale(100%);
+      opacity: 0.4;
+    }
+
   </style>
 </head>
 <body>
@@ -277,6 +321,11 @@
   <span class="shower-count-text">6</span>
 </div>
 
+<div id="toggleEvacBtn" class="off">
+  <img src="img/exit.png" alt="Evacuation">
+  <span class="evac-label-text">EVACUATION</span>
+</div>
+
 <div id="map"></div>
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -292,6 +341,17 @@
     wheelPxPerZoomLevel: 500   // PERLAMBAT ZOOM
   });
 
+  // --- KOORDINAT ---
+  map.on("click", function (e) {
+    const x = e.latlng.lat.toFixed(0);
+    const y = e.latlng.lng.toFixed(0);
+
+    L.popup()
+      .setLatLng(e.latlng)
+      .setContent("X: " + x + "<br>Y: " + y)
+      .openOn(map);
+  });
+
   const w = 3508;
   const h = 4961;
 
@@ -301,6 +361,9 @@
   map.fitBounds(bounds);
   map.setZoom(-3);
   map.setMaxBounds(bounds);
+
+  // --- OVERLAY DENAH EVAKUASI ---
+  const evacOverlay = L.imageOverlay("img/evakuasi.png", bounds);
 
   // --- ICON APAR
 
@@ -440,6 +503,13 @@
       { name: "SHOWER-05", x: 1542, y: 1581 },
       { name: "SHOWER-06", x: 1605, y: 1687 },
     ];
+
+    // --- ICON ASSEMBLY POINT ---
+    const assemblyIcon = L.icon({
+      iconUrl: "img/assembly.png",
+      iconSize: [60, 68],
+      iconAnchor: [30, 34]
+    });
           
     // --- RENDER APAR ---
     daftarApar.forEach((apar) => {
@@ -456,7 +526,6 @@
         });
       });
     });
-
 
     // --- RENDER APAB ---
     daftarApab.forEach((apab) => {
@@ -579,8 +648,39 @@
       }
     });
 
+    // --- MARKER ASSEMBLY POINT ---
+    const assemblyMarker = L.marker([680, 1585], { icon: assemblyIcon })
+      .bindPopup("<b>ASSEMBLY POINT</b>");
+
+    assemblyMarker.on("click", function () {
+      assemblyMarker.openPopup();
+      map.flyTo([680, 1585], map.getMaxZoom(), {
+        animate: true,
+        duration: 1.2
+      });
+    });
+
+    // --- TOGGLE EVACUATION ---
+    const toggleEvacBtn = document.getElementById("toggleEvacBtn");
+    let evacVisible = false;
+
+    toggleEvacBtn.addEventListener("click", () => {
+      evacVisible = !evacVisible;
+
+      if (evacVisible) {
+        toggleEvacBtn.classList.add("active");
+        toggleEvacBtn.classList.remove("off");
+        evacOverlay.addTo(map);
+        assemblyMarker.addTo(map);
+      } else {
+        toggleEvacBtn.classList.remove("active");
+        toggleEvacBtn.classList.add("off");
+        map.removeLayer(evacOverlay);
+        map.removeLayer(assemblyMarker);
+      }
+    });
+
 </script>
 
 </body>
 </html>
-
