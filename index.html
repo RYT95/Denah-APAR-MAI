@@ -303,6 +303,50 @@
       opacity: 0.4;
     }
 
+    @media (max-width: 768px) {
+
+  #toggleAparBtn,
+  #toggleApabBtn,
+  #toggleShowerBtn,
+  #toggleP3kBtn,
+  #toggleEvacBtn {
+    padding: 6px;
+    width: 34px;
+    border-radius: 8px;
+  }
+
+  #toggleAparBtn img,
+  #toggleApabBtn img,
+  #toggleShowerBtn img,
+  #toggleP3kBtn img,
+  #toggleEvacBtn img {
+    width: 24px;
+  }
+
+  #toggleAparBtn .apar-count-text,
+  #toggleApabBtn .apab-count-text,
+  #toggleShowerBtn .shower-count-text,
+  #toggleP3kBtn .p3k-count-text {
+    font-size: 16px;
+  }
+
+  #toggleEvacBtn .evac-label-text {
+    font-size: 12px;
+  }
+
+  #toggleAparBtn.active { width: 110px; }
+  #toggleApabBtn.active { width: 110px; }
+  #toggleShowerBtn.active { width: 110px; }
+  #toggleP3kBtn.active { width: 110px; }
+  #toggleEvacBtn.active { width: 145px; }
+
+  #toggleApabBtn { top: 50px; }
+  #toggleShowerBtn { top: 90px; }
+  #toggleP3kBtn { top: 130px; }
+  #toggleEvacBtn { top: 170px; }
+
+}
+
   </style>
 </head>
 <body>
@@ -732,8 +776,6 @@
         iconSize: [newSize2, newSize2],
         iconAnchor: [newAnchor2, newAnchor2]
       }));
-
-      assemblyMarker.setIcon(newIcon);
     }
 
     // Jalankan saat zoom berubah
