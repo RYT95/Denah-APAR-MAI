@@ -303,51 +303,6 @@
       opacity: 0.4;
     }
 
-    /* --- UKURAN TOMBOL DI HP (layar kecil) --- */
-    @media (max-width: 768px) {
-
-      #toggleAparBtn,
-      #toggleApabBtn,
-      #toggleShowerBtn,
-      #toggleP3kBtn,
-      #toggleEvacBtn {
-        padding: 6px;
-        width: 34px;
-        border-radius: 8px;
-      }
-    
-      #toggleAparBtn img,
-      #toggleApabBtn img,
-      #toggleShowerBtn img,
-      #toggleP3kBtn img,
-      #toggleEvacBtn img {
-        width: 24px;
-      }
-    
-      #toggleAparBtn.active { width: 110px; }
-      #toggleApabBtn.active { width: 110px; }
-      #toggleShowerBtn.active { width: 110px; }
-      #toggleP3kBtn.active { width: 110px; }
-      #toggleEvacBtn.active { width: 145px; }
-    
-      #toggleAparBtn .apar-count-text,
-      #toggleApabBtn .apab-count-text,
-      #toggleShowerBtn .shower-count-text,
-      #toggleP3kBtn .p3k-count-text {
-        font-size: 16px;
-      }
-    
-      #toggleEvacBtn .evac-label-text {
-        font-size: 12px;
-      }
-    
-      #toggleApabBtn { top: 60px; }
-      #toggleShowerBtn { top: 110px; }
-      #toggleP3kBtn { top: 160px; }
-      #toggleEvacBtn { top: 210px; }
-    
-    }
-    
   </style>
 </head>
 <body>
@@ -391,6 +346,17 @@
     maxBoundsViscosity: 1.0,
     wheelPxPerZoomLevel: 500   // PERLAMBAT ZOOM
   });
+
+  // --- KOORDINAT ---
+  //map.on("click", function (e) {
+    //const x = e.latlng.lat.toFixed(0);
+    //const y = e.latlng.lng.toFixed(0);
+
+    //L.popup()
+      //.setLatLng(e.latlng)
+      //.setContent("X: " + x + "<br>Y: " + y)
+      //.openOn(map);
+  //});
 
   const w = 3508;
   const h = 4961;
@@ -551,6 +517,13 @@
       iconSize: [60, 68],
       iconAnchor: [30, 34]
     });
+
+    const assemblyIcon2 = L.divIcon({
+      className: "",
+      html: "",
+      iconSize: [10, 10],
+      iconAnchor: [5, 5]
+    });
           
     // --- RENDER APAR ---
     daftarApar.forEach((apar) => {
@@ -701,6 +674,18 @@
       });
     });
 
+    // --- MARKER ASSEMBLY POINT 2 ---
+    const assemblyMarker2 = L.marker([3298, 1567], { icon: assemblyIcon2 })
+      .bindPopup("<b>ASSEMBLY POINT</b>");
+
+    assemblyMarker2.on("click", function () {
+      assemblyMarker2.openPopup();
+      map.flyTo([3298, 1567], map.getMaxZoom(), {
+        animate: true,
+        duration: 1.2
+      });
+    });
+
     // --- TOGGLE EVACUATION ---
     const toggleEvacBtn = document.getElementById("toggleEvacBtn");
     let evacVisible = false;
@@ -713,30 +698,40 @@
         toggleEvacBtn.classList.remove("off");
         evacOverlay.addTo(map);
         assemblyMarker.addTo(map);
+        assemblyMarker2.addTo(map);
       } else {
         toggleEvacBtn.classList.remove("active");
         toggleEvacBtn.classList.add("off");
         map.removeLayer(evacOverlay);
         map.removeLayer(assemblyMarker);
+        map.removeLayer(assemblyMarker2);
       }
     });
 
     // --- SESUAIKAN UKURAN RADIUS SAAT ZOOM BERUBAH ---
     function updateAssemblyIconSize() {
       const zoom = map.getZoom();
+      const scale = Math.pow(2, zoom - (-3));
 
-      // Ukuran dasar di zoom -3, makin zoom in makin besar
+      // Marker 1
       const baseSize = 20;
-      const scale = Math.pow(2, zoom - (-3));  // hitung faktor zoom
       const newSize = Math.round(baseSize * scale);
       const newAnchor = Math.round(newSize / 2);
-
-      const newIcon = L.divIcon({
-        className: "",
-        html: "",
+      assemblyMarker.setIcon(L.divIcon({
+        className: "", html: "",
         iconSize: [newSize, newSize],
         iconAnchor: [newAnchor, newAnchor]
-      });
+      }));
+
+      // Marker 2 (lebih kecil)
+      const baseSize2 = 10;
+      const newSize2 = Math.round(baseSize2 * scale);
+      const newAnchor2 = Math.round(newSize2 / 2);
+      assemblyMarker2.setIcon(L.divIcon({
+        className: "", html: "",
+        iconSize: [newSize2, newSize2],
+        iconAnchor: [newAnchor2, newAnchor2]
+      }));
 
       assemblyMarker.setIcon(newIcon);
     }
