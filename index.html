@@ -719,12 +719,12 @@
     });
 
     // --- MARKER ASSEMBLY POINT 2 ---
-    const assemblyMarker2 = L.marker([3298, 1567], { icon: assemblyIcon2 })
+    const assemblyMarker2 = L.marker([2693, 1427], { icon: assemblyIcon2 })
       .bindPopup("<b>ASSEMBLY POINT</b>");
 
     assemblyMarker2.on("click", function () {
       assemblyMarker2.openPopup();
-      map.flyTo([3298, 1567], map.getMaxZoom(), {
+      map.flyTo([2693, 1427], map.getMaxZoom(), {
         animate: true,
         duration: 1.2
       });
@@ -768,7 +768,7 @@
       }));
 
       // Marker 2 (lebih kecil)
-      const baseSize2 = 10;
+      const baseSize2 = 20;
       const newSize2 = Math.round(baseSize2 * scale);
       const newAnchor2 = Math.round(newSize2 / 2);
       assemblyMarker2.setIcon(L.divIcon({
